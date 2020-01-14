@@ -168,7 +168,7 @@ def detection_loss(pred, gt):
 
 
 def show_tensors(cropped, classification, regression, thetas, training_mask, file_names):
-    print(file_names[0])
+    #print(file_names[0])
     cropped = cropped[0].to('cpu').numpy()
     cropped = np.transpose(cropped, (1, 2, 0))
     cropped = cv2.resize(cropped, None, fx=0.25, fy=0.25) / 255
@@ -203,7 +203,11 @@ def fit(start_epoch, model, loss_func, opt, lr_scheduler, best_score, max_batche
         train_loss_stats = 0.0
         loss_count_stats = 0
         pbar = tqdm.tqdm(train_dl, 'Epoch ' + str(epoch), ncols=80)
+        #print("*******************")
+        #print("PBAR",train_dl)
+        #print("$$$$$$$$$$$$$$$$$$$$$$$$$$")
         for cropped, classification, regression, thetas, training_mask in pbar:
+            #print(cropped,classification,regression,thetas,training_mask)
             if batch_per_iter_cnt == 0:
                 optimizer.zero_grad()
             prediction = model(cropped.to('cuda'))
@@ -307,8 +311,8 @@ if __name__ == '__main__':
     parser.add_argument('--continue-training', action='store_true', help='continue training')
     args = parser.parse_args()
 
-    data_set = datasets.SynthText(args.train_folder, datasets.transform)
-    # data_set = datasets.ICDAR2015(args.train_folder, datasets.transform)
+    #data_set = datasets.SynthText(args.train_folder, datasets.transform)
+    data_set = datasets.ICDAR2015(args.train_folder, datasets.transform)
 
     # SynthText and ICDAR2015 have different layouts. One will probably need to provide two different paths to train
     # on concatination of these two data sets. But the paper doesn't concat them so me neither

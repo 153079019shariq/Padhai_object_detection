@@ -144,15 +144,16 @@ class ICDAR2015(torch.utils.data.Dataset):
     def __init__(self, root, transform):
         self.transform = transform
         self.root = root
-        self.img_dir = 'ch4_training_images'
-        self.labels_dir = 'ch4_training_localization_transcription_gt'
+        self.img_dir = 'Image'
+        self.labels_dir = 'Annotation_new'
         self.image_prefix = []
         self.pattern = re.compile('^' + '(\\d+),' * 8 + '(.+)$')
         self.normalizer = torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                                            std=[0.229, 0.224, 0.225])
-        for dirEntry in os.scandir(os.path.join(root, 'ch4_training_images')):
+        for dirEntry in os.scandir(os.path.join(root, 'Image')):
+            #print("dirEntry",dirEntry)
             self.image_prefix.append(dirEntry.name[:-4])
-
+        #print(self.image_prefix)
     def __len__(self):
         return len(self.image_prefix)
 
@@ -160,7 +161,7 @@ class ICDAR2015(torch.utils.data.Dataset):
         img = cv2.imread(os.path.join(os.path.join(self.root, self.img_dir), self.image_prefix[idx] + '.jpg'), cv2.IMREAD_COLOR).astype(np.float32)
         quads = []
         texts = []
-        lines = [line.rstrip('\n') for line in open(os.path.join(os.path.join(self.root, self.labels_dir), 'gt_' + self.image_prefix[idx] + '.txt'),
+        lines = [line.rstrip('\n') for line in open(os.path.join(os.path.join(self.root, self.labels_dir),  self.image_prefix[idx] + '.txt'),
                                                     encoding='utf-8-sig')]
         for line in lines:
             matches = self.pattern.findall(line)[0]
